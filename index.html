@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Buttons</title>
+    <style>
+        body {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            height: 100vh;
+            margin: 0;
+            padding: 10px;
+            background-color: #222;
+        }
+        button {
+            width: 100%;
+            height: 100%;
+            font-size: 1.5rem;
+            border: none;
+            cursor: pointer;
+            background-color: #444;
+            color: white;
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #666;
+        }
+        .playing {
+            background-color: #28a745 !important; /* Pretty green */
+        }
+    </style>
+</head>
+<body>
+    <script>
+        const audioFiles = [
+            { src: './DnD/EagleAttack.mp3', name: 'Eagle Attack' },
+            { src: './DnD/SingleEagle.mp3', name: 'Single Eagle' },
+            { src: './DnD/Flapping.mp3', name: 'Flapping' },
+            { src: './DnD/BowCharging.mp3', name: 'Bow Charging' },
+            { src: './DnD/ ArrowImpact.mp3', name: 'Arrow Impact' },
+        ];
+
+        const activeAudios = new Map();
+
+        audioFiles.forEach(audio => {
+            const btn = document.createElement('button');
+            btn.textContent = audio.name;
+            btn.addEventListener('click', () => {
+                if (activeAudios.has(audio.src)) {
+                    activeAudios.get(audio.src).pause();
+                    activeAudios.get(audio.src).currentTime = 0;
+                    activeAudios.delete(audio.src);
+                    btn.classList.remove('playing');
+                } else {
+                    const newAudio = new Audio(audio.src);
+                    newAudio.play();
+                    activeAudios.set(audio.src, newAudio);
+                    btn.classList.add('playing');
+                    newAudio.addEventListener('ended', () => {
+                        btn.classList.remove('playing');
+                        activeAudios.delete(audio.src);
+                    });
+                }
+            });
+            document.body.appendChild(btn);
+        });
+    </script>
+</body>
+</html>
